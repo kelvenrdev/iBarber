@@ -1,0 +1,31 @@
+﻿@model iBarber.Models.Profissional
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<table class="table table-bordered table-striped">
+    <tbody>
+        <tr>
+            <th>Nome</th>
+            <td>@Model.Nome</td>
+        </tr>
+        <tr>
+            <th>Telefone</th>
+            <td>@Model.Telefone</td>
+        </tr>
+        <tr>
+            <th>Email</th>
+            <td>@Model.Email</td>
+        </tr>
+        <tr>
+            <th>Barbearia</th>
+            <td>@Model.Barbearia</td>
+        </tr>
+    </tbody>
+</table>
+
+<a asp-action="Index" class="btn btn-secondary">Voltar</a>
+<a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Editar</a>
