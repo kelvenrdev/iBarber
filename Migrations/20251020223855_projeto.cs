@@ -5,11 +5,28 @@
 namespace iBarber.Migrations
 {
     /// <inheritdoc />
-    public partial class adicaoProfissional : Migration
+    public partial class projeto : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Barbearia",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Telefone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Endereco = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Bairro = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Cidade = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Barbearia", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Profissional",
                 columns: table => new
@@ -43,6 +60,9 @@ namespace iBarber.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Profissional");
+
+            migrationBuilder.DropTable(
+                name: "Barbearia");
         }
     }
 }

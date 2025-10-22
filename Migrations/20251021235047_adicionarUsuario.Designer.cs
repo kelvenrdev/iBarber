@@ -11,8 +11,8 @@ using iBarber.Models;
 namespace iBarber.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251020180243_adicaoProfissional")]
-    partial class adicaoProfissional
+    [Migration("20251021235047_adicionarUsuario")]
+    partial class adicionarUsuario
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -85,6 +85,30 @@ namespace iBarber.Migrations
                     b.HasIndex("BarbeariaId");
 
                     b.ToTable("Profissional");
+                });
+
+            modelBuilder.Entity("iBarber.Models.Usuario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Perfil")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Senha")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Usuarios");
                 });
 
             modelBuilder.Entity("iBarber.Models.Profissional", b =>
