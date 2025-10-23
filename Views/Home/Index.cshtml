@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Barbearia Kelven";
+    ViewBag.Title = "iBarber";
 }
 
 <!DOCTYPE html>
@@ -7,54 +7,167 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <title>iBarber | Seu Estilo, Sua Regra</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <title>@ViewBag.Title</title>
+
     <style>
+        /* Paleta de Cores LEVES:
+                   #ffffff (Branco - Fundo principal)
+                   #f7f7f7 (Cinza Claro - Fundo secundário)
+                   #333333 (Cinza Escuro - Texto principal)
+                   #4CAF50 (Verde Esmeralda/Menta - Destaque principal)
+                */
+
+        :root {
+            --primary-bg: #ffffff; /* Fundo principal Branco */
+            --secondary-bg: #f7f7f7; /* Fundo secundário Cinza Claro */
+            --highlight-color: #4CAF50; /* Verde de Destaque */
+            --highlight-hover: #79C796; /* Verde Claro no Hover */
+            --text-dark: #333333;
+            --text-light: #ffffff; /* Texto branco para usar em fundos escuros */
+            --font-main: 'Montserrat', sans-serif;
+            --font-title: 'Playfair Display', serif;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: var(--font-main);
+            color: var(--text-dark); /* Texto escuro */
+            background-color: var(--primary-bg); /* Fundo branco */
             margin: 0;
             padding: 0;
+            line-height: 1.6;
         }
-        header {
-            background-color: #222;
-            color: #fff;
+
+        /* --- Hero Section - Mantemos a estrutura, mudamos cores --- */
+        .hero-section {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            /* Overlay CLARO para a imagem:
+                       Usei um gradiente quase transparente para manter o aspecto "clean".
+                       SUBSTITUA a imagem, idealmente por uma com boa iluminação.
+                    */
+            background: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url('sua-imagem-de-barbearia-aqui.jpg') no-repeat center center;
+            background-size: cover;
+            position: relative;
+            color: var(--text-dark); /* Texto escuro sobre fundo claro */
+        }
+
+        .hero-content {
             padding: 20px;
-            text-align: center;
+            max-width: 800px;
         }
-        section {
-            padding: 30px;
-            text-align: center;
-        }
-        .btn {
-            color: white;
-            padding: 12px 24px;
+
+            .hero-content h1 {
+                font-family: var(--font-title);
+                font-size: 4rem;
+                margin-bottom: 10px;
+                color: var(--highlight-color); /* Título em destaque verde */
+                letter-spacing: 3px;
+            }
+
+            .hero-content p {
+                font-size: 1.5rem;
+                margin-bottom: 40px;
+                font-weight: 300;
+            }
+
+        /* --- Botão de Ação (CTA) --- */
+        .btn-cta {
+            background-color: var(--highlight-color); /* Botão Verde */
+            color: var(--text-light); /* Texto branco no botão verde */
+            padding: 15px 35px;
             text-decoration: none;
             border-radius: 5px;
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4); /* Sombra do destaque */
         }
-        footer {
-            background-color: #222;
-            color: #ccc;
+
+            .btn-cta:hover {
+                background-color: var(--highlight-hover); /* Verde mais claro no hover */
+                transform: translateY(-2px);
+            }
+
+        /* --- Seção de Recursos --- */
+        .features-section {
+            background-color: var(--secondary-bg); /* Fundo cinza claro */
+            color: var(--text-dark);
+            padding: 60px 20px;
             text-align: center;
-            padding: 10px;
-            font-size: 14px;
+        }
+
+        .feature-card {
+            display: inline-block;
+            width: 30%;
+            margin: 1.5%;
+            padding: 20px;
+        }
+
+            .feature-card i {
+                font-size: 3rem;
+                color: var(--highlight-color); /* Ícones em destaque verde */
+                margin-bottom: 15px;
+            }
+
+        .features-section h2 {
+            font-family: var(--font-title);
+            color: var(--text-dark);
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background-color: var(--primary-bg);
+            color: #666;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee; /* Linha divisória mais suave */
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Barbearia iBarber</h1>
-        <p>Estilo, tradição e cuidado com você</p>
-    </header>
 
-    <section>
-        <h2>Agende seu horário</h2>
-        <p>Faça já o seu agendamento. Atendimento com hora marcada e profissionais experientes.</p>
-        <a href="/Agendamentos" class="btn btn-success">Agendar Agora</a>
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>iBarber</h1>
+            <p>O futuro da gestão e agendamento para sua barbearia. Limpeza, conveniência e tecnologia no seu atendimento.</p>
+            <a href="/Agendamentos" class="btn-cta">
+                <i class="bi bi-calendar-check-fill"></i> Agendar Agora
+            </a>
+        </div>
     </section>
+
+    <section class="features-section">
+        <h2>Agendamento Rápido e Descomplicado</h2>
+        <div class="feature-card">
+            <i class="bi bi-calendar-check"></i>
+            <h3>Controle Total</h3>
+            <p>Visualize horários disponíveis em tempo real e agende com um clique.</p>
+        </div>
+        <div class="feature-card">
+            <i class="bi bi-bell"></i>
+            <h3>Lembretes</h3>
+            <p>Receba notificações e lembretes para nunca mais perder um horário.</p>
+        </div>
+        <div class="feature-card">
+            <i class="bi bi-phone"></i>
+            <h3>Acesso Móvel</h3>
+            <p>Gerencie seus agendamentos de forma rápida e intuitiva, direto do seu celular.</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 iBarber. Todos os direitos reservados. | Design Clean.</p>
+    </footer>
 
 </body>
 </html>

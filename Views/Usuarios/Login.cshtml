@@ -27,7 +27,10 @@
                 <input type="submit" value="Acessar" class="btn btn-success" />
             </div>
         </form>
-        <h3>@ViewBag.Message</h3>
+        @if (ViewBag.Mensagem != null)
+        {
+            <h1 class="text-danger">@ViewBag.Mensagem</h1>
+        }
     </div>
 </div>
 

@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using iBarber.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace iBarber.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsuariosController : Controller
     {
         private readonly AppDbContext _context;
@@ -26,12 +28,22 @@ namespace iBarber.Controllers
             return View(await _context.Usuarios.ToListAsync());
         }
 
+        [AllowAnonymous]// Permite acesso sem autenticação
+        public IActionResult AccessDenied()
+        {
+            return View();
+
+        }
+
+
+        [AllowAnonymous]// Permite acesso sem autenticação
         public IActionResult Login()
         {
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]// Permite acesso sem autenticação
         public async Task<IActionResult> Login(Usuario usuario)
         {
             var dados = await _context.Usuarios
@@ -75,6 +87,7 @@ namespace iBarber.Controllers
             return View();
         }
 
+        [AllowAnonymous]// Permite acesso sem autenticação
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();

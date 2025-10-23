@@ -25,26 +25,45 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
                         </li>
+                        @* @if (User.Identity.IsAuthenticated)
+                        {
+                            
+                        } *@
+
+                        @if (User.IsInRole("Admin"))
+                        {
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Barbearias" asp-action="Index">Barbearias</a>
                         </li>
+                        }
+
+                            
+                        @if (User.IsInRole("Admin"))
+                        {
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Profissionais" asp-action="Index">Profissionais</a>
                         </li>
+                        }
+
+
+                        @if(User.IsInRole("Admin"))
+                        {
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Usuarios" asp-action="Index">Usuarios</a>
-                        </li>
+                        </li>                            
+                        }
+
                     </ul>
                     <ul class="navbar-nav>">
                         @if(User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
+                            <li class="nav-item list-unstyled">
                                 Olá, @User.Identity.Name <a class="nav-link text-white btn btn-danger" asp-area="" asp-controller="Usuarios" asp-action="Logout">Sair</a>
                             </li>
                         }
                         else
                         {
-                            <li class="nav-item">
+                            <li class="nav-item list-unstyled">
                                 <a class="nav-link text-white btn btn-success" asp-area="" asp-controller="Usuarios" asp-action="Login">Login</a>
                             </li>
                         }
@@ -61,7 +80,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - iBarber - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - iBarber - <a asp-area="" asp-controller="Home" asp-action="Privacy">Politica de privacidade</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
