@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using iBarber.Models;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 
 namespace iBarber.Controllers
 {
@@ -22,6 +24,61 @@ namespace iBarber.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await _context.Usuarios.ToListAsync());
+        }
+
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(Usuario usuario)
+        {
+            var dados = await _context.Usuarios
+                .FindAsync(usuario.Id);
+            if (dados == null)
+            {
+                ViewBag.Mensagem = "Usuário ou senha errados";
+                return View();
+            }
+            bool senhaOk = BCrypt.Net.BCrypt.Verify(usuario.Senha, dados.Senha);
+
+            if (senhaOk)
+            {
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, dados.Nome),
+                    new Claim(ClaimTypes.NameIdentifier, dados.Id.ToString()),
+                    new Claim(ClaimTypes.Role, dados.Perfil.ToString())
+                };
+
+                var usuarioIdentity = new ClaimsIdentity(claims, "Login");
+                ClaimsPrincipal principal = new ClaimsPrincipal(usuarioIdentity);
+
+                var props = new AuthenticationProperties
+                {
+                    AllowRefresh = true,
+                    ExpiresUtc = DateTime.UtcNow.ToLocalTime().AddHours(8),
+                    IsPersistent = true
+                };
+
+                await HttpContext.SignInAsync(principal, props);
+
+                return Redirect("/");
+
+            }
+            else
+            {
+                ViewBag.Mensagem = "Usuário ou senha errados";
+            }
+
+            return View();
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Login", "Usuarios");
         }
 
         // GET: Usuarios/Details/5
