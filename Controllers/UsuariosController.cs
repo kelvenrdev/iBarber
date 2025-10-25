@@ -47,7 +47,7 @@ namespace iBarber.Controllers
         public async Task<IActionResult> Login(Usuario usuario)
         {
             var dados = await _context.Usuarios
-                .FindAsync(usuario.Id);
+                .FirstOrDefaultAsync(u => u.Nome == usuario.Nome);
             if (dados == null)
             {
                 ViewBag.Mensagem = "Usuário ou senha errados";
@@ -111,7 +111,7 @@ namespace iBarber.Controllers
 
             return View(usuario);
         }
-
+        [AllowAnonymous]// Permite acesso sem autenticação
         // GET: Usuarios/Create
         public IActionResult Create()
         {
