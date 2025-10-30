@@ -20,14 +20,14 @@ namespace iBarber.Controllers
             _context = context;
         }
 
-        // GET: Profissionals
+        // GET: Profissionais
         public async Task<IActionResult> Index()
         {
             var appDbContext = _context.Profissionais.Include(p => p.Barbearia);
             return View(await appDbContext.ToListAsync());
         }
 
-        // GET: Profissionals/Details/5
+        // GET: Profissionais/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -46,16 +46,15 @@ namespace iBarber.Controllers
             return View(profissional);
         }
 
-        // GET: Profissionals/Create
+        // GET: Profissionais/Create
         public IActionResult Create()
         {
-            ViewData["BarbeariaId"] = new SelectList(_context.Barbearias, "Id", "Bairro");
+            // CORRIGIDO: Trocando "Bairro" por "Nome" para a exibição no Dropdown
+            ViewData["BarbeariaId"] = new SelectList(_context.Barbearias, "Id", "Nome");
             return View();
         }
 
-        // POST: Profissionals/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Profissionais/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nome,Telefone,Email,BarbeariaId")] Profissional profissional)
@@ -66,11 +65,13 @@ namespace iBarber.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BarbeariaId"] = new SelectList(_context.Barbearias, "Id", "Bairro", profissional.BarbeariaId);
+
+            // CORRIGIDO: Trocando "Bairro" por "Nome" para a exibição no Dropdown
+            ViewData["BarbeariaId"] = new SelectList(_context.Barbearias, "Id", "Nome", profissional.BarbeariaId);
             return View(profissional);
         }
 
-        // GET: Profissionals/Edit/5
+        // GET: Profissionais/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -83,13 +84,12 @@ namespace iBarber.Controllers
             {
                 return NotFound();
             }
-            ViewData["BarbeariaId"] = new SelectList(_context.Barbearias, "Id", "Bairro", profissional.BarbeariaId);
+            // CORRIGIDO: Trocando "Bairro" por "Nome" para a exibição no Dropdown
+            ViewData["BarbeariaId"] = new SelectList(_context.Barbearias, "Id", "Nome", profissional.BarbeariaId);
             return View(profissional);
         }
 
-        // POST: Profissionals/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Profissionais/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Telefone,Email,BarbeariaId")] Profissional profissional)
@@ -119,11 +119,12 @@ namespace iBarber.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BarbeariaId"] = new SelectList(_context.Barbearias, "Id", "Bairro", profissional.BarbeariaId);
+            // CORRIGIDO: Trocando "Bairro" por "Nome" para a exibição no Dropdown
+            ViewData["BarbeariaId"] = new SelectList(_context.Barbearias, "Id", "Nome", profissional.BarbeariaId);
             return View(profissional);
         }
 
-        // GET: Profissionals/Delete/5
+        // GET: Profissionais/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -142,7 +143,7 @@ namespace iBarber.Controllers
             return View(profissional);
         }
 
-        // POST: Profissionals/Delete/5
+        // POST: Profissionais/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

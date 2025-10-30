@@ -4,51 +4,70 @@
     ViewData["Title"] = "Create";
 }
 
-<h4>Agendamento</h4>
+<h4>Novo Agendamento</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            @* 1. CAMPO DE EXIBIÇÃO DO NOME DO CLIENTE LOGADO (Somente leitura) *@
+            @* CAMPO DE CLIENTE LOGADO (Somente leitura) *@
             <div class="form-group">
                 <label class="control-label">Cliente</label>
                 <input class="form-control" value="@ViewData["NomeClienteLogado"]" disabled />
             </div>
 
-            @* 2. CAMPO OCULTO: ID do Cliente *@
+            @* CAMPO OCULTO: ID do Cliente *@
             <input type="hidden" asp-for="UsuarioId" />
 
-            @* NOVO CAMPO 3: BARBEARIA *@
+            @* CAMPO 1: BARBEARIA *@
             <div class="form-group">
                 <label for="BarbeariaId" class="control-label">Barbearia</label>
                 <select id="BarbeariaId" name="BarbeariaId" class="form-control" asp-items="ViewBag.BarbeariaId">
                     <option value="">Selecione a Barbearia</option>
                 </select>
+                <span class="text-danger" data-valmsg-for="BarbeariaId"></span>
             </div>
 
-            @* Campo Data e Hora *@
-            <div class="form-group">
-                <label asp-for="DataHora" class="control-label"></label>
-                <input asp-for="DataHora" class="form-control" />
-                <span asp-validation-for="DataHora" class="text-danger"></span>
-            </div>
-
-            @* CAMPO 4: PROFISSIONAL (Modificado para ser preenchido por JS) *@
+            @* CAMPO 2: PROFISSIONAL *@
             <div class="form-group">
                 <label asp-for="ProfissionalId" class="control-label"></label>
-                <select asp-for="ProfissionalId" class="form-control" disabled>
+                <select asp-for="ProfissionalId" class="form-control" id="ProfissionalId" disabled>
                     <option value="">Selecione o Profissional</option>
                 </select>
+                <span asp-validation-for="ProfissionalId" class="text-danger"></span>
             </div>
 
-            @* CAMPO 5: SERVIÇO (Modificado para ser preenchido por JS) *@
+            @* CAMPO 3: DATA *@
             <div class="form-group">
-                <label asp-for="ServicoId" class="control-label"></label>
-                <select asp-for="ServicoId" class="form-control" disabled>
-                    <option value="">Selecione o Serviço</option>
-                </select>
+                <label for="DataSelecionada" class="control-label">Data do Agendamento</label>
+                <input id="DataSelecionada" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            </div>
+
+            @* CAMPO 4: SERVIÇOS (Checkboxes) *@
+            <div class="form-group">
+                <label class="control-label">Serviços Disponíveis (30 min cada)</label>
+                <div id="ServicosContainer" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 4px;">
+                    <p class="text-info">Selecione a Barbearia e o Profissional para ver os serviços.</p>
+                </div>
+            </div>
+
+            @* CAMPO 5: VALOR TOTAL (Cálculo Dinâmico) *@
+            <div class="form-group">
+                <label class="control-label">Valor Total Estimado</label>
+                <input id="ValorTotal" class="form-control" type="text" value="R$ 0,00" readonly />
+            </div>
+
+            @* CAMPO 6: HORÁRIOS DISPONÍVEIS (Lista Dinâmica) *@
+            <div class="form-group">
+                <label class="control-label">Horários de Início Disponíveis</label>
+                <div id="HorariosContainer" style="max-height: 250px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 4px;">
+                    <p class="text-info">Selecione os Serviços e a Data para ver os horários.</p>
+                </div>
+
+                @* Campos ocultos para enviar ao POST do Controller *@
+                <input type="hidden" asp-for="DataHora" id="DataHoraOculta" />
+                <input type="hidden" id="ServicosSelecionadosInput" name="ServicosSelecionados" />
             </div>
 
             <div class="form-group">
@@ -60,6 +79,7 @@
     </div>
 </div>
 
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
@@ -67,71 +87,193 @@
 
     <script>
         $(document).ready(function () {
-            // Seletores dos Dropdowns
+            // Referências aos elementos
             var $barbearia = $('#BarbeariaId');
             var $profissional = $('#ProfissionalId');
-            var $servico = $('#ServicoId');
+            var $dataSelecionada = $('#DataSelecionada');
 
-            // Função para resetar Profissional e Serviço
-            function resetDropdowns() {
+            var $servicosContainer = $('#ServicosContainer');
+            var $valorTotal = $('#ValorTotal');
+            var $horariosContainer = $('#HorariosContainer');
+
+            var $dataHoraOculta = $('#DataHoraOculta');
+            var $servicosSelecionadosInput = $('#ServicosSelecionadosInput');
+
+            var DURACAO_POR_SERVICO = 30; // 30 minutos por serviço
+
+            function resetSelecoes() {
                 $profissional.empty().append('<option value="">Selecione o Profissional</option>').prop('disabled', true);
-                $servico.empty().append('<option value="">Selecione o Serviço</option>').prop('disabled', true);
+                $servicosContainer.html('<p class="text-info">Selecione a Barbearia e o Profissional para ver os serviços.</p>');
+                $valorTotal.val('R$ 0,00');
+                $dataHoraOculta.val('');
+                $servicosSelecionadosInput.val('');
+                carregarHorarios(); // Resetar/Recarregar horários
             }
 
-            // 1. CARREGAR PROFISSIONAIS E SERVIÇOS AO MUDAR A BARBEARIA
-            $barbearia.change(function () {
-                var barbeariaId = $(this).val();
-                resetDropdowns(); // Resetar ao mudar a Barbearia
+            // --- FUNÇÕES DE CÁLCULO E VALIDAÇÃO ---
+
+            function calcularTotalEDuracao() {
+                var total = 0;
+                var servicosIds = [];
+
+                // Itera sobre todos os checkboxes marcados
+                $servicosContainer.find('input[type="checkbox"]:checked').each(function() {
+                    var preco = parseFloat($(this).data('preco'));
+                    var id = $(this).val();
+                    total += preco;
+                    servicosIds.push(id);
+                });
+
+                var duracaoMinutos = servicosIds.length * DURACAO_POR_SERVICO;
+
+                // 1. Atualiza o Valor Total na tela
+                $valorTotal.val('R$ ' + total.toFixed(2).replace('.', ','));
+
+                // 2. Atualiza o campo oculto com os IDs selecionados (separados por vírgula)
+                $servicosSelecionadosInput.val(servicosIds.join(','));
+
+                return duracaoMinutos;
+            }
+
+            // --- FUNÇÕES DE CARREGAMENTO AJAX ---
+
+            // 1. Carrega Profissionais e Serviços ao mudar a Barbearia
+            function carregarProfissionaisEServicos() {
+                var barbeariaId = $barbearia.val();
+                resetSelecoes();
 
                 if (barbeariaId) {
-
                     // A) CARREGA PROFISSIONAIS
                     $.ajax({
                         url: '@Url.Action("GetProfissionaisPorBarbearia", "Agendamentos")',
                         type: "GET",
                         data: { barbeariaId: barbeariaId },
                         success: function (data) {
-                            if (data && data.length > 0) {
-                                $.each(data, function (i, item) {
-                                    $profissional.append($('<option>', {
-                                        value: item.id,
-                                        text : item.nome
-                                    }));
-                                });
-                                $profissional.prop('disabled', false);
-                            }
-                        },
-                        error: function () {
-                            console.error('Erro ao carregar profissionais.');
+                             $profissional.empty().append('<option value="">Selecione o Profissional</option>');
+                             if (data && data.length > 0) {
+                                 $.each(data, function (i, item) {
+                                     $profissional.append($('<option>', { value: item.id, text: item.nome }));
+                                 });
+                                 $profissional.prop('disabled', false);
+                             }
                         }
                     });
 
-                    // B) CARREGA SERVIÇOS (Filtro por Barbearia ID)
+                    // B) CARREGA SERVIÇOS DETALHADOS (Checkboxes)
                     $.ajax({
-                        url: '@Url.Action("GetServicosPorBarbearia", "Agendamentos")',
+                        url: '@Url.Action("GetServicosDetalhesPorBarbearia", "Agendamentos")',
                         type: "GET",
                         data: { barbeariaId: barbeariaId },
                         success: function (data) {
+                            $servicosContainer.empty();
                             if (data && data.length > 0) {
+                                var servicosHtml = '';
                                 $.each(data, function (i, item) {
-                                    $servico.append($('<option>', {
-                                        value: item.id,
-                                        text : item.nome
-                                    }));
+                                    servicosHtml += '<div class="form-check">';
+                                    // data-preco é usado para cálculo do valor total
+                                    servicosHtml += '  <input class="form-check-input servico-checkbox" type="checkbox" value="' + item.id + '" id="servico-' + item.id + '" data-preco="' + item.preco + '">';
+                                    servicosHtml += '  <label class="form-check-label" for="servico-' + item.id + '">';
+                                    servicosHtml += '    ' + item.nome + ' (R$ ' + item.preco.toFixed(2).replace('.', ',') + ')';
+                                    servicosHtml += '  </label>';
+                                    servicosHtml += '</div>';
                                 });
-                                $servico.prop('disabled', false);
+                                $servicosContainer.html(servicosHtml);
+
+                                // Adiciona listener para recalcular e recarregar horários
+                                $servicosContainer.off('change', '.servico-checkbox').on('change', '.servico-checkbox', function() {
+                                    calcularTotalEDuracao();
+                                    carregarHorarios();
+                                });
+
+                            } else {
+                                $servicosContainer.html('<p class="text-warning">Nenhum serviço disponível para esta barbearia.</p>');
+                            }
+                        }
+                    });
+                }
+            }
+
+            // 2. FUNÇÃO PRINCIPAL: Carregar Horários (Lógica de Disponibilidade)
+            function carregarHorarios() {
+                var profissionalId = $profissional.val();
+                var data = $dataSelecionada.val();
+                var duracaoMinutos = calcularTotalEDuracao(); // Pega a duração dos serviços selecionados
+
+                $horariosContainer.html('<p class="text-muted">Carregando horários...</p>');
+                $dataHoraOculta.val('');
+
+                // Só carrega se tiver profissional, data e pelo menos um serviço selecionado
+                if (profissionalId && data && duracaoMinutos > 0) {
+                    $.ajax({
+                        url: '@Url.Action("GetHorariosDisponiveis", "Agendamentos")',
+                        type: "GET",
+                        data: {
+                            profissionalId: profissionalId,
+                            data: data,
+                            duracaoMinutos: duracaoMinutos // Passa a duração total!
+                        },
+                        success: function (data) {
+                            $horariosContainer.empty();
+
+                            if (data && data.length > 0) {
+                                var listaHtml = '<ul class="list-group">';
+                                $.each(data, function (i, item) {
+                                    var isDisponivel = item.disponivel;
+                                    var classe = isDisponivel ? 'list-group-item-success' : 'list-group-item-danger';
+                                    var texto = isDisponivel ? 'Disponível' : 'Ocupado';
+
+                                    listaHtml += '<li class="list-group-item ' + classe + ' d-flex justify-content-between align-items-center">';
+                                    listaHtml += '<span>' + item.horario + '</span>';
+
+                                    if (isDisponivel) {
+                                        // Botão de seleção
+                                        listaHtml += '<button type="button" class="btn btn-sm btn-success selecionar-horario" data-datetime="' + item.dataHoraCompleta + '">' + texto + '</button>';
+                                    } else {
+                                        // Texto para indisponível
+                                        listaHtml += '<span class="badge bg-danger">' + texto + '</span>';
+                                    }
+
+                                    listaHtml += '</li>';
+                                });
+                                listaHtml += '</ul>';
+                                $horariosContainer.html(listaHtml);
+
+                            } else {
+                                $horariosContainer.html('<p class="text-warning">Nenhum horário disponível para a duração de ' + duracaoMinutos + ' minutos.</p>');
                             }
                         },
                         error: function () {
-                            console.error('Erro ao carregar serviços.');
+                            $horariosContainer.html('<p class="text-danger">Erro ao comunicar com o servidor.</p>');
                         }
                     });
-
+                } else {
+                     $horariosContainer.html('<p class="text-info">Selecione o Profissional, a Data e pelo menos um Serviço.</p>');
                 }
+            }
+
+            // --- INICIALIZAÇÃO E EVENTOS ---
+
+            // Lógica para selecionar o horário na lista
+            $horariosContainer.on('click', '.selecionar-horario', function() {
+                var selectedDateTime = $(this).data('datetime');
+
+                // 1. Atualiza o campo oculto (DataHora)
+                $dataHoraOculta.val(selectedDateTime);
+
+                // 2. Feedback visual
+                $('.selecionar-horario').removeClass('btn-primary').addClass('btn-success').text('Disponível');
+                $(this).removeClass('btn-success').addClass('btn-primary').text('Selecionado');
             });
 
-            // Opcional: Se o Servico fosse vinculado ao Profissional, o código para $profissional.change() iria aqui.
-            // Como o Servico é vinculado à Barbearia, o filtro é feito apenas na mudança da Barbearia (acima).
+            // DISPARADORES DOS EVENTOS
+            $barbearia.change(carregarProfissionaisEServicos);
+            $profissional.change(carregarHorarios);
+            $dataSelecionada.change(carregarHorarios);
+
+            // Chama a carga inicial se já houver dados
+            if ($barbearia.val()) {
+                 carregarProfissionaisEServicos();
+            }
         });
     </script>
 }

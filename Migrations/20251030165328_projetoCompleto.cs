@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace iBarber.Migrations
 {
     /// <inheritdoc />
-    public partial class projeto03 : Migration
+    public partial class projetoCompleto : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
