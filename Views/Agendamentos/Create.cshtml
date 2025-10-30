@@ -220,7 +220,7 @@
                                 $.each(data, function (i, item) {
                                     var isDisponivel = item.disponivel;
                                     var classe = isDisponivel ? 'list-group-item-success' : 'list-group-item-danger';
-                                    var texto = isDisponivel ? 'Disponível' : 'Ocupado';
+                                    var texto = isDisponivel ? 'Disponível' : 'Reservado';
 
                                     listaHtml += '<li class="list-group-item ' + classe + ' d-flex justify-content-between align-items-center">';
                                     listaHtml += '<span>' + item.horario + '</span>';

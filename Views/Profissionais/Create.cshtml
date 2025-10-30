@@ -11,31 +11,31 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            {{-- CAMPO NOME --}}
+            @* CAMPO NOME *@
             <div class="form-group">
                 <label asp-for="Nome" class="control-label"></label>
                 <input asp-for="Nome" class="form-control" />
                 <span asp-validation-for="Nome" class="text-danger"></span>
             </div>
 
-            {{-- CAMPO E-MAIL --}}
+            @* CAMPO E-MAIL *@
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
-            {{-- CAMPO TELEFONE --}}
+            @* CAMPO TELEFONE *@
             <div class="form-group">
                 <label asp-for="Telefone" class="control-label"></label>
                 <input asp-for="Telefone" class="form-control" />
                 <span asp-validation-for="Telefone" class="text-danger"></span>
             </div>
 
-            {{-- CAMPO BARBEARIA (Linka o profissional à barbearia) --}}
+            @* CAMPO BARBEARIA (Linka o profissional à barbearia) *@
             <div class="form-group">
                 <label asp-for="BarbeariaId" class="control-label"></label>
-                {{-- O ViewBag.BarbeariaId é preenchido no ProfissionaisController --}}
+                @* O ViewBag.BarbeariaId é preenchido no ProfissionaisController *@
                 <select asp-for="BarbeariaId" class="form-control" asp-items="ViewBag.BarbeariaId">
                     <option value="">Selecione a Barbearia</option>
                 </select>
@@ -44,8 +44,8 @@
 
             <br />
             <div class="form-group">
+                <a asp-action="Index" class="btn btn-secondary">Voltar</a>
                 <input type="submit" value="Criar Profissional" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Voltar para a Lista</a>
             </div>
         </form>
     </div>
@@ -56,5 +56,4 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-        {{-- AQUI NÃO PRECISA DE JAVASCRIPT, POIS A LÓGICA É SIMPLES --}}
 }

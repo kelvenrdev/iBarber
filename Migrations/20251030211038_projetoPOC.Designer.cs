@@ -12,8 +12,8 @@ using iBarber.Models;
 namespace iBarber.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251030165328_projetoCompleto")]
-    partial class projetoCompleto
+    [Migration("20251030211038_projetoPOC")]
+    partial class projetoPOC
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

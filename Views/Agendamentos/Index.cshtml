@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<iBarber.Models.Agendamento>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Agendamentos";
 }
 
-<h1>Meus Agendamento</h1>
+<h1>Agendamentos</h1>
 
 <p>
-    <a asp-action="Create">Novo Agendamento</a>
+    <a asp-action="Create" class="btn btn-primary">Novo Agendamento</a>
 </p>
 <table class="table">
     <thead>
@@ -26,9 +26,11 @@
                 Barbearia
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Servico.Preco)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Servico)
             </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -52,13 +54,17 @@
                     @(item.Profissional?.Barbearia != null ? item.Profissional.Barbearia.Nome : "Barbearia Não Encontrada")
                 </td>
                 <td>
+                    @* Acesso via Agendamento -> Profissional -> Barbearia -> Nome *@
+                    @(item.Profissional?.Barbearia != null ? item.Servico.Preco : "Serviço Não Encontrado")
+                </td>
+                <td>
                     @* Adicionando verificação nula para segurança *@
                     @(item.Servico != null ? item.Servico.Nome : "Serviço Não Encontrado")
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Editar</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Visualizar</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Apagar</a>
                 </td>
             </tr>
         }
