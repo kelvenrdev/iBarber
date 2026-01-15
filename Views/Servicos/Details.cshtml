@@ -1,0 +1,31 @@
+﻿@model iBarber.Models.Servico
+
+@{
+    ViewData["Title"] = "Visualizar Serviços";
+}
+
+<h4>Informacoes de: @Model.Barbearia.Nome</h4>
+
+<table class="table table-bordered table-striped">
+    <tbody>
+        <tr>
+            <th>Barbearia</th>
+            <td>@Model.Barbearia.Bairro</td>
+        </tr>
+        <tr>
+            <th>Serviço</th>
+            <td>@Model.Nome</td>
+        </tr>
+        <tr>
+            <th>Valor do Serviço</th>
+            <td>@Model.Preco</td>
+        </tr>
+        <tr>
+            <th>Tempo do Serviço</th>
+            <td>@Model.DuracaoEmMinutos minutos</td>
+        </tr>
+    </tbody>
+</table>
+
+<a asp-action="Index" class="btn btn-secondary">Voltar</a>
+<a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Editar</a>

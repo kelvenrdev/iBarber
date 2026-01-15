@@ -1,0 +1,72 @@
+﻿@model IEnumerable<iBarber.Models.Agendamento>
+
+@{
+    ViewData["Title"] = "Agendamentos";
+}
+
+<h1>Agendamentos</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Novo Agendamento</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DataHora)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Usuario)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Profissional)
+            </th>
+            @* NOVA COLUNA: BARBEARIA *@
+            <th>
+                Barbearia
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Servico.Preco)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Servico)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataHora)
+                </td>
+                <td>
+                    @* Adicionando verificação nula para segurança *@
+                    @(item.Usuario != null ? item.Usuario.Nome : "Cliente Não Encontrado")
+                </td>
+                <td>
+                    @* Adicionando verificação nula para segurança *@
+                    @(item.Profissional != null ? item.Profissional.Nome : "Profissional Não Encontrado")
+                </td>
+                @* NOVO DADO: NOME DA BARBEARIA *@
+                <td>
+                    @* Acesso via Agendamento -> Profissional -> Barbearia -> Nome *@
+                    @(item.Profissional?.Barbearia != null ? item.Profissional.Barbearia.Nome : "Barbearia Não Encontrada")
+                </td>
+                <td>
+                    @* Acesso via Agendamento -> Profissional -> Barbearia -> Nome *@
+                    @(item.Profissional?.Barbearia != null ? item.Servico.Preco : "Serviço Não Encontrado")
+                </td>
+                <td>
+                    @* Adicionando verificação nula para segurança *@
+                    @(item.Servico != null ? item.Servico.Nome : "Serviço Não Encontrado")
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Editar</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Visualizar</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Apagar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

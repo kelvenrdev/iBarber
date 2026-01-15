@@ -1,0 +1,59 @@
+﻿@model iBarber.Models.Profissional
+
+@{
+    ViewData["Title"] = "Criar Profissional";
+}
+
+<h4>Novo Profissional</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            @* CAMPO NOME *@
+            <div class="form-group">
+                <label asp-for="Nome" class="control-label"></label>
+                <input asp-for="Nome" class="form-control" />
+                <span asp-validation-for="Nome" class="text-danger"></span>
+            </div>
+
+            @* CAMPO E-MAIL *@
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            @* CAMPO TELEFONE *@
+            <div class="form-group">
+                <label asp-for="Telefone" class="control-label"></label>
+                <input asp-for="Telefone" class="form-control" />
+                <span asp-validation-for="Telefone" class="text-danger"></span>
+            </div>
+
+            @* CAMPO BARBEARIA (Linka o profissional à barbearia) *@
+            <div class="form-group">
+                <label asp-for="BarbeariaId" class="control-label"></label>
+                @* O ViewBag.BarbeariaId é preenchido no ProfissionaisController *@
+                <select asp-for="BarbeariaId" class="form-control" asp-items="ViewBag.BarbeariaId">
+                    <option value="">Selecione a Barbearia</option>
+                </select>
+                <span asp-validation-for="BarbeariaId" class="text-danger"></span>
+            </div>
+
+            <br />
+            <div class="form-group">
+                <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+                <input type="submit" value="Criar Profissional" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
