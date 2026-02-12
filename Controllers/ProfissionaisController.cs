@@ -11,22 +11,23 @@ using System.Threading.Tasks;
 namespace iBarber.Controllers
 {
     [Authorize]
-    public class BarbeariasController : Controller
+    public class ProfissionaisController : Controller
     {
         private readonly AppDbContext _context;
 
-        public BarbeariasController(AppDbContext context)
+        public ProfissionaisController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: Barbearias
+        // GET: Profissionals
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Barbearias.ToListAsync());
+            var appDbContext = _context.Profissionais.Include(p => p.Barbearia);
+            return View(await appDbContext.ToListAsync());
         }
 
-        // GET: Barbearias/Details/5
+        // GET: Profissionals/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,39 +35,42 @@ namespace iBarber.Controllers
                 return NotFound();
             }
 
-            var barbearia = await _context.Barbearias
+            var profissional = await _context.Profissionais
+                .Include(p => p.Barbearia)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (barbearia == null)
+            if (profissional == null)
             {
                 return NotFound();
             }
 
-            return View(barbearia);
+            return View(profissional);
         }
 
-        // GET: Barbearias/Create
+        // GET: Profissionals/Create
         public IActionResult Create()
         {
+            ViewData["BarbeariaId"] = new SelectList(_context.Barbearias, "Id", "Bairro");
             return View();
         }
 
-        // POST: Barbearias/Create
+        // POST: Profissionals/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Telefone,Endereco,Bairro,Cidade")] Barbearia barbearia)
+        public async Task<IActionResult> Create([Bind("Id,Nome,Telefone,Email,BarbeariaId")] Profissional profissional)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(barbearia);
+                _context.Add(profissional);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(barbearia);
+            ViewData["BarbeariaId"] = new SelectList(_context.Barbearias, "Id", "Bairro", profissional.BarbeariaId);
+            return View(profissional);
         }
 
-        // GET: Barbearias/Edit/5
+        // GET: Profissionals/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,22 +78,23 @@ namespace iBarber.Controllers
                 return NotFound();
             }
 
-            var barbearia = await _context.Barbearias.FindAsync(id);
-            if (barbearia == null)
+            var profissional = await _context.Profissionais.FindAsync(id);
+            if (profissional == null)
             {
                 return NotFound();
             }
-            return View(barbearia);
+            ViewData["BarbeariaId"] = new SelectList(_context.Barbearias, "Id", "Bairro", profissional.BarbeariaId);
+            return View(profissional);
         }
 
-        // POST: Barbearias/Edit/5
+        // POST: Profissionals/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Telefone,Endereco,Bairro,Cidade")] Barbearia barbearia)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Telefone,Email,BarbeariaId")] Profissional profissional)
         {
-            if (id != barbearia.Id)
+            if (id != profissional.Id)
             {
                 return NotFound();
             }
@@ -98,12 +103,12 @@ namespace iBarber.Controllers
             {
                 try
                 {
-                    _context.Update(barbearia);
+                    _context.Update(profissional);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BarbeariaExists(barbearia.Id))
+                    if (!ProfissionalExists(profissional.Id))
                     {
                         return NotFound();
                     }
@@ -114,10 +119,11 @@ namespace iBarber.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(barbearia);
+            ViewData["BarbeariaId"] = new SelectList(_context.Barbearias, "Id", "Bairro", profissional.BarbeariaId);
+            return View(profissional);
         }
 
-        // GET: Barbearias/Delete/5
+        // GET: Profissionals/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -125,34 +131,35 @@ namespace iBarber.Controllers
                 return NotFound();
             }
 
-            var barbearia = await _context.Barbearias
+            var profissional = await _context.Profissionais
+                .Include(p => p.Barbearia)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (barbearia == null)
+            if (profissional == null)
             {
                 return NotFound();
             }
 
-            return View(barbearia);
+            return View(profissional);
         }
 
-        // POST: Barbearias/Delete/5
+        // POST: Profissionals/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var barbearia = await _context.Barbearias.FindAsync(id);
-            if (barbearia != null)
+            var profissional = await _context.Profissionais.FindAsync(id);
+            if (profissional != null)
             {
-                _context.Barbearias.Remove(barbearia);
+                _context.Profissionais.Remove(profissional);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BarbeariaExists(int id)
+        private bool ProfissionalExists(int id)
         {
-            return _context.Barbearias.Any(e => e.Id == id);
+            return _context.Profissionais.Any(e => e.Id == id);
         }
     }
 }

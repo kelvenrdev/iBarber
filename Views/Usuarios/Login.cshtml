@@ -1,0 +1,59 @@
+﻿@model iBarber.Models.Usuario
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h1 class="mb-4">Login</h1>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white text-center">
+                <h4 class="mb-0">Seja bem vindo ao iBarber</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Login">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Nome" class="form-label"></label>
+                        <input asp-for="Nome" class="form-control" placeholder="Digite seu nome" />
+                        <span asp-validation-for="Nome" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label asp-for="Senha" class="form-label"></label>
+                        <input asp-for="Senha" class="form-control" placeholder="Digite sua senha" type="password" />
+                        <span asp-validation-for="Senha" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid gap-2 mb-3">
+                        <input type="submit" value="Acessar" class="btn btn-success" />
+                        <button type="button" class="btn btn-outline-primary">
+                            <i class="bi bi-google"></i> Entrar com Google
+                        </button>
+                    </div>
+
+                    <div class="text-center">
+                        <a href="#" class="text-decoration-none">Esqueceu a senha?</a>
+                        <a asp-area="" asp-controller="Usuarios" asp-action="Create">Criar Conta</a>
+                    </div>
+                </form>
+
+                @if (ViewBag.Mensagem != null)
+                {
+                    <div class="alert alert-danger mt-4 text-center">
+                        @ViewBag.Mensagem
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
