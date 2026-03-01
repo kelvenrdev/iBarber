@@ -1,0 +1,44 @@
+﻿@model iBarber.Models.Profissional
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Apagar profissional @Model.Nome</h3>
+
+    <table class="table table-bordered table-striped">
+        <tbody>
+            <tr>
+                <th>Nome</th>
+                <td>@Model.Nome</td>
+            </tr>
+            <tr>
+                <th>Telefone</th>
+                <td>@Model.Telefone</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>@Model.Email</td>
+            </tr>
+            <tr>
+                <th>Barbearia</th>
+                <td>@Model.Barbearia</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    
+    <form asp-action="Delete" class="mt-4">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger me-2"
+                onclick="return confirm('Tem certeza que deseja excluir o profissional ( @Model.Nome ) ?');">
+            <i class="bi bi-trash"></i> Confirmar Exclusão
+        </button>
+    </form>
+</div>

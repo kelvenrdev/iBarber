@@ -1,0 +1,27 @@
+﻿@model iBarber.Models.Usuario
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Visualizar Usuario</h1>
+
+
+<table class="table table-bordered table-striped">
+    <tbody>
+        <tr>
+            <th>Nome</th>
+            <td>@Html.DisplayFor(model => model.Nome)</td>
+        </tr>
+
+        <tr>
+            <th>Perfil</th>
+            <td>@Html.DisplayFor(model => model.Perfil)</td>
+        </tr>
+
+    </tbody>
+</table>
+<div>
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Editar</a>
+</div>

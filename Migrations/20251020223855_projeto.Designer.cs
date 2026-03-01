@@ -11,8 +11,8 @@ using iBarber.Models;
 namespace iBarber.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251020131042_adicaoBarbearia")]
-    partial class adicaoBarbearia
+    [Migration("20251020223855_projeto")]
+    partial class projeto
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -55,6 +55,47 @@ namespace iBarber.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Barbearia");
+                });
+
+            modelBuilder.Entity("iBarber.Models.Profissional", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BarbeariaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Telefone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BarbeariaId");
+
+                    b.ToTable("Profissional");
+                });
+
+            modelBuilder.Entity("iBarber.Models.Profissional", b =>
+                {
+                    b.HasOne("iBarber.Models.Barbearia", "Barbearia")
+                        .WithMany()
+                        .HasForeignKey("BarbeariaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Barbearia");
                 });
 #pragma warning restore 612, 618
         }
